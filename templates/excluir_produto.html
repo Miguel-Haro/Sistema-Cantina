@@ -1,0 +1,123 @@
+{% load static %}
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Excluir Produto - Cantina</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+
+  <body>
+    <div class="layout">
+      <!-- MENU LATERAL -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-icon">🛒</div>
+
+          <div>
+            <h2>CANTINA</h2>
+            <span>Sistema de Controle</span>
+          </div>
+        </div>
+
+        <nav class="menu">
+          <a href="{% url 'dashboard' %}" class="menu-item">
+            <span><i class="fa-solid fa-house-chimney"></i></span>
+            Dashboard
+          </a>
+
+          <a href="{% url 'produtos' %}" class="menu-item active">
+            <span><i class="fa-solid fa-box-open"></i></span>
+            Produtos
+          </a>
+
+          <a href="{% url 'categorias' %}" class="menu-item">
+            <span><i class="fa-solid fa-tags"></i></span>
+            Categorias
+          </a>
+
+          <a href="{% url 'pessoas' %}" class="menu-item">
+            <span><i class="fa-solid fa-user-group"></i></span>
+            Pessoas
+          </a>
+
+          <a href="{% url 'vendas' %}" class="menu-item">
+            <span><i class="fa-solid fa-cart-shopping"></i></span>
+            Vendas
+          </a>
+
+          <a href="{% url 'contas_receber' %}" class="menu-item">
+            <span><i class="fa-solid fa-sack-dollar"></i></span>
+            Contas a Receber
+          </a>
+        </nav>
+
+        <div class="user-area">
+          <div class="user-icon">👤</div>
+
+          <div>
+            <strong>Administrador</strong>
+            <small>admin</small>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CONTEÚDO PRINCIPAL -->
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <h1>Excluir Produto</h1>
+            <p>Confirme a exclusão do produto.</p>
+          </div>
+        </header>
+
+        <!-- PAINEL DE CONFIRMAÇÃO -->
+        <section class="content">
+          <div class="delete-panel">
+            <div class="delete-icon">🗑️</div>
+
+            <h2>Confirmar exclusão</h2>
+
+            <p>Tem certeza que deseja excluir o produto abaixo?</p>
+
+            <p>
+              <strong>{{ produto.nome }}</strong>
+            </p>
+
+            <div class="delete-warning">
+              ⚠️ Essa ação não poderá ser desfeita.
+            </div>
+
+            <form method="POST" action="{% url 'excluir_produto' produto.id %}">
+              {% csrf_token %}
+
+              <div class="delete-actions">
+                <button type="submit" class="btn-danger">
+                  🗑️ Sim, excluir
+                </button>
+
+                <a href="{% url 'produtos' %}" class="btn-secondary">
+                  ↩ Cancelar
+                </a>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- RODAPÉ -->
+        <footer>© 2026 Cantina Escolar - Todos os direitos reservados.</footer>
+      </main>
+    </div>
+  </body>
+</html>

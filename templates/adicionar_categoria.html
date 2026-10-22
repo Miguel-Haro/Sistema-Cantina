@@ -1,0 +1,175 @@
+{% load static %}
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Cadastrar Categoria - Cantina</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css"
+      integrity="sha512-x9WwyMYBnlXMNQ6kQ/Lyzu1NqIhLQKL5Oq6xByfXuRj7s9CskyCbLv/1IjqzJmXwFXWr0ov6jBV7Qbc0hh9nHg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+
+  <body>
+    <div class="layout">
+      <!-- MENU LATERAL -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-icon">🛒</div>
+
+          <div>
+            <h2>CANTINA</h2>
+            <span>Sistema de Controle</span>
+          </div>
+        </div>
+
+        <nav class="menu">
+          <a href="{% url 'dashboard' %}" class="menu-item">
+            <span>
+              <i class="fa-solid fa-house-chimney"></i>
+            </span>
+            Dashboard
+          </a>
+
+          <a href="{% url 'produtos' %}" class="menu-item">
+            <span><i class="fa-solid fa-box-open"></i></span>
+            Produtos
+          </a>
+
+          <a href="{% url 'categorias' %}" class="menu-item active">
+            <span><i class="fa-solid fa-tags"></i></span>
+            Categorias
+          </a>
+
+          <a href="{% url 'pessoas' }}" class="menu-item">
+            <span><i class="fa-solid fa-user-group"></i></span>
+            Pessoas
+          </a>
+
+          <a href="{% url 'vendas' %}" class="menu-item">
+            <span><i class="fa-solid fa-cart-shopping"></i></span>
+            Vendas
+          </a>
+
+          <a href="{% url 'contas_receber' %}" class="menu-item">
+            <span><i class="fa-solid fa-sack-dollar"></i></span>
+            Contas a Receber
+          </a>
+        </nav>
+
+        <div class="user-area">
+          <div class="user-icon">👤</div>
+
+          <div>
+            <strong>Administrador</strong>
+            <small>admin</small>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CONTEÚDO PRINCIPAL -->
+      <main class="main">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <div class="top-right"></div>
+        </header>
+
+        <!-- CONTEÚDO -->
+        <section class="content">
+          <div class="welcome">
+            <div>
+              <h1>Cadastrar Categoria</h1>
+
+              <p>Crie uma nova categoria para os produtos da cantina.</p>
+            </div>
+          </div>
+
+          <!-- FORMULÁRIO -->
+          <div class="panel form-panel">
+            <div class="panel-header">
+              <div>
+                <h2>Nova categoria</h2>
+
+                <p>Preencha os dados da categoria abaixo.</p>
+              </div>
+            </div>
+
+            {% if messages %} {% for message in messages %}
+
+            <div class="message {{ message.tags }}">{{ message }}</div>
+
+            {% endfor %} {% endif %}
+
+            <form method="POST">
+              {% csrf_token %}
+
+              <div class="form-group">
+                <label for="nome"> Nome da categoria </label>
+
+                <input
+                  type="text"
+                  id="nome"
+                  name="nome"
+                  placeholder="Ex: Bebidas"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="descricao"> Descrição </label>
+
+                <textarea
+                  id="descricao"
+                  name="descricao"
+                  placeholder="Descrição da categoria"
+                  rows="4"
+                ></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                  💾 Cadastrar Categoria
+                </button>
+
+                <a href="{% url 'categorias' %}" class="btn-secondary">
+                  ↩ Cancelar
+                </a>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <footer>© 2026 Cantina Escolar - Todos os direitos reservados.</footer>
+      </main>
+    </div>
+
+    <!-- MENU MOBILE -->
+    <script>
+      const layout = document.querySelector('.layout');
+      const menuButton = document.querySelector('.menu-button');
+
+      if (layout && menuButton) {
+        menuButton.addEventListener('click', () => {
+          const isOpen = layout.classList.toggle('sidebar-open');
+
+          menuButton.setAttribute('aria-expanded', String(isOpen));
+        });
+
+        layout.addEventListener('click', (event) => {
+          if (event.target === layout) {
+            layout.classList.remove('sidebar-open');
+            menuButton.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

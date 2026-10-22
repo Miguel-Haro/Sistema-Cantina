@@ -1,0 +1,116 @@
+{% load static %}
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Excluir Pessoa - Cantina</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css"
+      integrity="sha512-x9WwyMYBnlXMNQ6kQ/Lyzu1NqIhLQKL5Oq6xByfXuRj7s9CskyCbLv/1IjqzJmXwFXWr0ov6jBV7Qbc0hh9nHg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+
+  <body>
+    <div class="layout">
+      <!-- MENU LATERAL -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-icon">🛒</div>
+
+          <div>
+            <h2>CANTINA</h2>
+            <span>Sistema de Controle</span>
+          </div>
+        </div>
+
+        <nav class="menu">
+          <nav class="menu">
+            <a href="{% url 'dashboard' %}" class="menu-item active">
+              <span>
+                <i class="fa-solid fa-house-chimney"></i>
+              </span>
+              Dashboard
+            </a>
+
+            <a href="{% url 'produtos' %}" class="menu-item">
+              <span><i class="fa-solid fa-box-open"></i></span>
+              Produtos
+            </a>
+
+            <a href="{% url 'categorias' %}" class="menu-item">
+              <span><i class="fa-solid fa-tags"></i></span>
+              Categorias
+            </a>
+
+            <a href="{% url 'pessoas' %}" class="menu-item">
+              <span><i class="fa-solid fa-user-group"></i></span>
+              Pessoas
+            </a>
+
+            <a href="{% url 'vendas' %}" class="menu-item">
+              <span><i class="fa-solid fa-cart-shopping"></i></span>
+              Vendas
+            </a>
+
+            <a href="{% url 'contas_receber' %}" class="menu-item">
+              <span><i class="fa-solid fa-sack-dollar"></i></span>
+              Contas a Receber
+            </a>
+          </nav>
+        </nav>
+
+        <div class="user-area">
+          <div class="user-icon">👤</div>
+
+          <div>
+            <strong>Administrador</strong>
+            <small>admin</small>
+          </div>
+        </div>
+      </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <h1>Excluir Pessoa</h1>
+
+          <p>Confirme a exclusão da pessoa.</p>
+        </div>
+      </div>
+
+      <div class="delete-panel">
+        <div class="delete-icon">🗑️</div>
+
+        <h2>Confirmar exclusão</h2>
+
+        <p>Tem certeza que deseja excluir esta pessoa?</p>
+
+        <p>
+          <strong> {{ pessoa.nome }} </strong>
+        </p>
+
+        <p>CPF: {{ pessoa.cpf }}</p>
+
+        <div class="delete-warning">⚠️ Essa ação não poderá ser desfeita.</div>
+
+        <form method="POST">
+          {% csrf_token %}
+
+          <div class="delete-actions">
+            <button type="submit" class="btn-danger">🗑️ Sim, excluir</button>
+
+            <a href="{% url 'pessoas' %}" class="btn-secondary"> ↩ Cancelar </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

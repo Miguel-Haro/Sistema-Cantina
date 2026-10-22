@@ -1,0 +1,88 @@
+{% load static %}
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Cancelar Venda - Cantina</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+
+  <body>
+    <div class="sidebar">
+      <h2>Cantina</h2>
+
+      <a href="{% url 'dashboard' %}"> 📊 Dashboard </a>
+
+      <a href="{% url 'produtos' %}"> 📦 Produtos </a>
+
+      <a href="{% url 'categorias' %}"> 📁 Categorias </a>
+
+      <a href="{% url 'pessoas' %}"> 👥 Pessoas </a>
+
+      <a href="{% url 'vendas' %}" class="active"> 🛒 Vendas </a>
+
+      <a href="#"> 💰 Contas a Receber </a>
+
+      <a href="#"> 📈 Relatórios </a>
+
+      <a href="#"> 👤 Usuários </a>
+
+      <a href="#"> ⚙️ Configurações </a>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <h1>Cancelar Venda</h1>
+
+          <p>Confirme o cancelamento da venda.</p>
+        </div>
+      </div>
+
+      <div class="delete-panel">
+        <div class="delete-icon">🛒</div>
+
+        <h2>Confirmar cancelamento</h2>
+
+        <p>Você está prestes a cancelar esta venda:</p>
+
+        <p>
+          <strong> {{ venda.produto.nome }} </strong>
+        </p>
+
+        <p>
+          Cliente:
+          <strong> {{ venda.pessoa.nome }} </strong>
+        </p>
+
+        <p>
+          Quantidade:
+          <strong> {{ venda.quantidade }} </strong>
+        </p>
+
+        <p>
+          Total:
+          <strong> R$ {{ venda.total }} </strong>
+        </p>
+
+        <div class="delete-warning">
+          ⚠️ O produto será devolvido automaticamente ao estoque.
+        </div>
+
+        <form method="POST">
+          {% csrf_token %}
+
+          <div class="delete-actions">
+            <button type="submit" class="btn-danger">🗑️ Cancelar Venda</button>
+
+            <a href="{% url 'vendas' %}" class="btn-secondary"> ↩ Voltar </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

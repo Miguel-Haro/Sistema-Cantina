@@ -1,0 +1,712 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Relatórios | Cantina Escolar</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      /* ========================================
+         RELATÓRIOS - CANTINA ESCOLAR
+      ======================================== */
+
+      .pagina-relatorios {
+        background: #f6f7fb;
+        color: #252525;
+      }
+
+      .relatorios-container {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        width: 100%;
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 30px;
+      }
+
+      /* CABEÇALHO */
+
+      .relatorios-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .relatorios-subtitulo {
+        display: inline-block;
+        margin-bottom: 10px;
+        color: #fa1900;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+      }
+
+      .relatorios-header h1 {
+        margin: 0 0 8px;
+        color: #202020;
+        font-size: 30px;
+        font-weight: 800;
+      }
+
+      .relatorios-header p {
+        margin: 0;
+        color: #777;
+        font-size: 14px;
+      }
+
+      .btn-imprimir {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 13px 20px;
+        border: none;
+        border-radius: 10px;
+        background: #fa1900;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .btn-imprimir:hover {
+        background: #d91600;
+        transform: translateY(-2px);
+      }
+
+      /* CARDS */
+
+      .relatorios-cards {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .relatorio-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        min-width: 0;
+        padding: 23px;
+        border: 1px solid #ededed;
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.035);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .relatorio-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+      }
+
+      .relatorio-icone {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 49px;
+        height: 49px;
+        border-radius: 13px;
+        font-size: 21px;
+        font-weight: 800;
+      }
+
+      .relatorio-icone.vermelho {
+        background: #fff0ed;
+        color: #fa1900;
+      }
+
+      .relatorio-icone.verde {
+        background: #e8f8ee;
+        color: #16a34a;
+      }
+
+      .relatorio-icone.laranja {
+        background: #fff3e5;
+        color: #ea8500;
+      }
+
+      .relatorio-icone.azul {
+        background: #eaf2ff;
+        color: #2563eb;
+      }
+
+      .relatorio-info {
+        min-width: 0;
+      }
+
+      .relatorio-info p {
+        margin: 2px 0 10px;
+        color: #777;
+        font-size: 13px;
+      }
+
+      .relatorio-info h2 {
+        margin: 0 0 8px;
+        color: #222;
+        font-size: 25px;
+        font-weight: 800;
+        overflow-wrap: anywhere;
+      }
+
+      .relatorio-info span {
+        color: #929292;
+        font-size: 12px;
+      }
+
+      /* GRÁFICOS */
+
+      .relatorios-graficos {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px;
+      }
+
+      .relatorio-painel {
+        min-width: 0;
+        padding: 24px;
+        border: 1px solid #ededed;
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.035);
+      }
+
+      .painel-header {
+        margin-bottom: 22px;
+      }
+
+      .painel-header h2 {
+        margin: 0 0 8px;
+        color: #252525;
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .painel-header p {
+        margin: 0;
+        color: #888;
+        font-size: 13px;
+      }
+
+      .grafico-container {
+        position: relative;
+        width: 100%;
+        height: 290px;
+      }
+
+      .grafico-container canvas {
+        display: block;
+        max-width: 100%;
+      }
+
+      /* TABELA */
+
+      .tabela-painel {
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .tabela-painel .painel-header {
+        margin: 0;
+        padding: 23px 24px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .tabela-responsiva {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .tabela-relatorios {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      .tabela-relatorios thead {
+        background: #fafafa;
+      }
+
+      .tabela-relatorios th {
+        padding: 16px 20px;
+        color: #777;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .tabela-relatorios td {
+        padding: 17px 20px;
+        border-top: 1px solid #f0f0f0;
+        color: #444;
+        font-size: 14px;
+      }
+
+      .tabela-relatorios tbody tr {
+        transition: background 0.2s ease;
+      }
+
+      .tabela-relatorios tbody tr:hover {
+        background: #fff8f7;
+      }
+
+      .tabela-relatorios td:first-child {
+        color: #252525;
+        font-weight: 700;
+      }
+
+      .tabela-relatorios .valor-faturamento {
+        color: #16a34a;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .tabela-relatorios .tabela-vazia {
+        padding: 35px 20px;
+        color: #888;
+        text-align: center;
+        font-weight: 400;
+      }
+
+      /* RODAPÉ */
+
+      .relatorios-footer {
+        padding: 8px 0;
+        color: #929292;
+        font-size: 12px;
+        text-align: center;
+      }
+
+      .relatorios-footer p {
+        margin: 0;
+      }
+
+      /* IMPRESSÃO */
+
+      @media print {
+        @page {
+          size: landscape;
+          margin: 12mm;
+        }
+
+        body,
+        .pagina-relatorios {
+          background: #fff !important;
+        }
+
+        .sidebar,
+        .topbar,
+        .btn-imprimir,
+        .menu-button {
+          display: none !important;
+        }
+
+        .layout,
+        .main,
+        .content,
+        .relatorios-container {
+          display: block !important;
+          width: 100% !important;
+          max-width: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+
+        .relatorios-container > * {
+          margin-bottom: 18px;
+        }
+
+        .relatorio-card,
+        .relatorio-painel,
+        .tabela-painel {
+          break-inside: avoid;
+          box-shadow: none !important;
+        }
+
+        .relatorios-cards {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .relatorios-graficos {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .relatorio-card {
+          padding: 12px;
+        }
+
+        .grafico-container {
+          height: 220px;
+        }
+      }
+
+      /* TABLETS */
+
+      @media (max-width: 1100px) {
+        .relatorios-cards {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .relatorios-graficos {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* CELULARES */
+
+      @media (max-width: 600px) {
+        .relatorios-container {
+          gap: 18px;
+          padding: 18px 14px;
+        }
+
+        .relatorios-header {
+          align-items: flex-start;
+        }
+
+        .relatorios-header h1 {
+          font-size: 25px;
+        }
+
+        .btn-imprimir {
+          width: 100%;
+        }
+
+        .relatorios-cards {
+          grid-template-columns: 1fr;
+          gap: 13px;
+        }
+
+        .relatorio-card {
+          padding: 18px;
+        }
+
+        .relatorio-painel {
+          padding: 17px;
+        }
+
+        .painel-header h2 {
+          font-size: 16px;
+        }
+
+        .grafico-container {
+          height: 250px;
+        }
+
+        .tabela-painel {
+          padding: 0;
+        }
+
+        .tabela-painel .painel-header {
+          padding: 18px;
+        }
+
+        .tabela-relatorios th,
+        .tabela-relatorios td {
+          padding: 13px;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="pagina-relatorios">
+    <main class="relatorios-container">
+      <!-- CABEÇALHO -->
+      <header class="relatorios-header">
+        <div>
+          <span class="relatorios-subtitulo">GESTÃO DA CANTINA</span>
+          <h1>Relatórios</h1>
+          <p>Acompanhe as vendas e o desempenho da cantina.</p>
+        </div>
+
+        <button type="button" class="btn-imprimir" onclick="window.print()">
+          🖨️ Imprimir relatório
+        </button>
+      </header>
+
+      <!-- INDICADORES -->
+      <section class="relatorios-cards">
+        <article class="relatorio-card">
+          <div class="relatorio-icone vermelho">R$</div>
+
+          <div class="relatorio-info">
+            <p>Vendas de hoje</p>
+            <h2>R$ {{ total_vendas_hoje|default_if_none:0|floatformat:2 }}</h2>
+            <span>Faturamento diário</span>
+          </div>
+        </article>
+
+        <article class="relatorio-card">
+          <div class="relatorio-icone verde">↗</div>
+
+          <div class="relatorio-info">
+            <p>Vendas do mês</p>
+            <h2>R$ {{ total_vendas_mes|default_if_none:0|floatformat:2 }}</h2>
+            <span>Faturamento mensal</span>
+          </div>
+        </article>
+
+        <article class="relatorio-card">
+          <div class="relatorio-icone laranja">▤</div>
+
+          <div class="relatorio-info">
+            <p>Quantidade de vendas</p>
+            <h2>{{ quantidade_vendas|default_if_none:0 }}</h2>
+            <span>Vendas registradas no mês</span>
+          </div>
+        </article>
+
+        <article class="relatorio-card">
+          <div class="relatorio-icone azul">□</div>
+
+          <div class="relatorio-info">
+            <p>Produtos cadastrados</p>
+            <h2>{{ quantidade_produtos|default_if_none:0 }}</h2>
+            <span>Produtos no sistema</span>
+          </div>
+        </article>
+      </section>
+
+      <!-- GRÁFICOS -->
+      <section class="relatorios-graficos">
+        <article class="relatorio-painel">
+          <header class="painel-header">
+            <h2>Vendas por período</h2>
+            <p>Acompanhe o faturamento dos últimos 7 dias.</p>
+          </header>
+
+          <div class="grafico-container">
+            <canvas id="graficoVendas"></canvas>
+          </div>
+        </article>
+
+        <article class="relatorio-painel">
+          <header class="painel-header">
+            <h2>Produtos mais vendidos</h2>
+            <p>Ranking dos produtos por quantidade vendida.</p>
+          </header>
+
+          <div class="grafico-container">
+            <canvas id="graficoProdutos"></canvas>
+          </div>
+        </article>
+      </section>
+
+      <!-- TABELA DE PRODUTOS -->
+      <section class="relatorio-painel tabela-painel">
+        <header class="painel-header">
+          <h2>Produtos mais vendidos</h2>
+          <p>Confira os produtos com maior saída.</p>
+        </header>
+
+        <div class="tabela-responsiva">
+          <table class="tabela-relatorios">
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th>Quantidade vendida</th>
+                <th>Faturamento</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for produto in produtos_mais_vendidos %}
+              <tr>
+                <td>{{ produto.nome }}</td>
+
+                <td>{{ produto.categoria.nome|default:"Sem categoria" }}</td>
+
+                <td>{{ produto.quantidade_vendida|default_if_none:0 }}</td>
+
+                <td class="valor-faturamento">
+                  R$ {{ produto.faturamento|default_if_none:0|floatformat:2 }}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="tabela-vazia">
+                  Nenhum produto vendido para exibir.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- RODAPÉ -->
+      <footer class="relatorios-footer">
+        <p>Relatórios da Cantina Escolar · 2026</p>
+      </footer>
+    </main>
+
+    <!-- DADOS DO DJANGO PARA OS GRÁFICOS -->
+    {{ vendas_labels|json_script:"vendas-labels" }} {{
+    vendas_valores|json_script:"vendas-valores" }} {{
+    produtos_labels|json_script:"produtos-labels" }} {{
+    produtos_quantidades|json_script:"produtos-quantidades" }}
+
+    <script>
+      function obterDados(id) {
+        const elemento = document.getElementById(id);
+
+        if (!elemento) {
+          return [];
+        }
+
+        try {
+          const dados = JSON.parse(elemento.textContent);
+          return Array.isArray(dados) ? dados : [];
+        } catch (erro) {
+          console.error('Erro ao carregar dados do gráfico:', id, erro);
+          return [];
+        }
+      }
+
+      const vermelho = '#fa1900';
+
+      const vendasLabels = obterDados('vendas-labels');
+      const vendasValores = obterDados('vendas-valores');
+      const produtosLabels = obterDados('produtos-labels');
+      const produtosQuantidades = obterDados('produtos-quantidades');
+
+      // GRÁFICO DE FATURAMENTO
+      const elementoVendas = document.getElementById('graficoVendas');
+
+      if (elementoVendas && typeof Chart !== 'undefined') {
+        new Chart(elementoVendas, {
+          type: 'line',
+
+          data: {
+            labels: vendasLabels,
+
+            datasets: [
+              {
+                label: 'Faturamento (R$)',
+                data: vendasValores,
+                borderColor: vermelho,
+                backgroundColor: 'rgba(250, 25, 0, 0.10)',
+                fill: true,
+                tension: 0.35,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: vermelho,
+                borderWidth: 3,
+              },
+            ],
+          },
+
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+              legend: {
+                display: false,
+              },
+
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return (
+                      'Faturamento: ' +
+                      Number(context.raw || 0).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })
+                    );
+                  },
+                },
+              },
+            },
+
+            scales: {
+              y: {
+                beginAtZero: true,
+
+                ticks: {
+                  callback: function (valor) {
+                    return 'R$ ' + valor;
+                  },
+                },
+              },
+
+              x: {
+                grid: {
+                  display: false,
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // GRÁFICO DE PRODUTOS MAIS VENDIDOS
+      const elementoProdutos = document.getElementById('graficoProdutos');
+
+      if (elementoProdutos && typeof Chart !== 'undefined') {
+        new Chart(elementoProdutos, {
+          type: 'bar',
+
+          data: {
+            labels: produtosLabels,
+
+            datasets: [
+              {
+                label: 'Unidades vendidas',
+                data: produtosQuantidades,
+                backgroundColor: 'rgba(250, 25, 0, 0.85)',
+                hoverBackgroundColor: vermelho,
+                borderRadius: 6,
+                maxBarThickness: 35,
+              },
+            ],
+          },
+
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+              legend: {
+                display: false,
+              },
+            },
+
+            scales: {
+              x: {
+                beginAtZero: true,
+
+                ticks: {
+                  precision: 0,
+                },
+              },
+
+              y: {
+                grid: {
+                  display: false,
+                },
+              },
+            },
+          },
+        });
+      }
+    </script>
+  </body>
+</html>

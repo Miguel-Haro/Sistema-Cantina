@@ -1,0 +1,282 @@
+{% load static %}
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Registrar Venda - Cantina</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css"
+      integrity="sha512-x9WwyMYBnlXMNQ6kQ/Lyzu1NqIhLQKL5Oq6xByfXuRj7s9CskyCbLv/1IjqzJmXwFXWr0ov6jBV7Qbc0hh9nHg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+
+  <body>
+    <div class="layout">
+      <!-- MENU LATERAL -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-icon">🛒</div>
+
+          <div>
+            <h2>CANTINA</h2>
+            <span>Sistema de Controle</span>
+          </div>
+        </div>
+
+        <nav class="menu">
+          <a href="{% url 'dashboard' %}" class="menu-item">
+            <span>
+              <i class="fa-solid fa-house-chimney"></i>
+            </span>
+            Dashboard
+          </a>
+
+          <a href="{% url 'produtos' %}" class="menu-item active">
+            <span><i class="fa-solid fa-box-open"></i></span>
+            Produtos
+          </a>
+
+          <a href="{% url 'categorias' %}" class="menu-item">
+            <span><i class="fa-solid fa-tags"></i></span>
+            Categorias
+          </a>
+
+          <a href="{% url 'pessoas' %}" class="menu-item">
+            <span><i class="fa-solid fa-user-group"></i></span>
+            Pessoas
+          </a>
+
+          <a href="{% url 'vendas' %}" class="menu-item">
+            <span><i class="fa-solid fa-cart-shopping"></i></span>
+            Vendas
+          </a>
+
+          <a href="{% url 'contas_receber' %}" class="menu-item">
+            <span><i class="fa-solid fa-sack-dollar"></i></span>
+            Contas a Receber
+          </a>
+        </nav>
+
+        <div class="user-area">
+          <div class="user-icon">👤</div>
+
+          <div>
+            <strong>Administrador</strong>
+            <small>admin</small>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CONTEÚDO PRINCIPAL -->
+      <main class="main">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <div class="top-right"></div>
+        </header>
+
+        <!-- CONTEÚDO -->
+        <section class="content">
+          <div class="welcome">
+            <div>
+              <h1>Registrar Venda</h1>
+
+              <p>Registre uma nova venda na cantina.</p>
+            </div>
+          </div>
+
+          <!-- FORMULÁRIO -->
+          <div class="panel form-panel">
+            <div class="panel-header">
+              <div>
+                <h2>Nova venda</h2>
+
+                <p>Selecione a pessoa, o produto e a quantidade.</p>
+              </div>
+            </div>
+
+            {% if messages %} {% for message in messages %}
+
+            <div class="message {{ message.tags }}">{{ message }}</div>
+
+            {% endfor %} {% endif %}
+
+            <form method="POST" id="vendaForm">
+              {% csrf_token %}
+
+              <!-- PESSOA -->
+              <div class="form-group">
+                <label for="pessoa"> Pessoa </label>
+
+                <select id="pessoa" name="pessoa" required>
+                  <option value="">Selecione uma pessoa</option>
+
+                  {% for pessoa in pessoas %}
+
+                  <option value="{{ pessoa.id }}">
+                    {{ pessoa.nome }} — {{ pessoa.cpf }}
+                  </option>
+
+                  {% endfor %}
+                </select>
+              </div>
+
+              <!-- PRODUTO -->
+              <div class="form-group">
+                <label for="produto"> Produto </label>
+
+                <select id="produto" name="produto" required>
+                  <option value="">Selecione um produto</option>
+
+                  {% for produto in produtos %}
+
+                  <option
+                    value="{{ produto.id }}"
+                    data-preco="{{ produto.preco }}"
+                    data-estoque="{{ produto.estoque }}"
+                  >
+                    {{ produto.nome }}
+                  </option>
+
+                  {% endfor %}
+                </select>
+              </div>
+
+              <!-- INFORMAÇÕES DO PRODUTO -->
+              <div class="product-info">
+                <div>
+                  <span> Preço unitário </span>
+
+                  <strong id="preco"> R$ 0,00 </strong>
+                </div>
+
+                <div>
+                  <span> Estoque disponível </span>
+
+                  <strong id="estoque"> 0 </strong>
+                </div>
+              </div>
+
+              <!-- QUANTIDADE -->
+              <div class="form-group">
+                <label for="quantidade"> Quantidade </label>
+
+                <input
+                  type="number"
+                  id="quantidade"
+                  name="quantidade"
+                  min="1"
+                  value="1"
+                  required
+                />
+              </div>
+
+              <!-- TOTAL -->
+              <div class="sale-total">
+                <span> Total da venda </span>
+
+                <strong id="total"> R$ 0,00 </strong>
+              </div>
+
+              <!-- BOTÕES -->
+              <div class="form-actions">
+                <button type="submit" class="btn-primary" id="btnVenda">
+                  🛒 Registrar Venda
+                </button>
+
+                <a href="{% url 'vendas' %}" class="btn-secondary">
+                  ↩ Cancelar
+                </a>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <footer>© 2026 Cantina Escolar - Todos os direitos reservados.</footer>
+      </main>
+    </div>
+
+    <!-- MENU MOBILE -->
+    <script>
+      const layout = document.querySelector('.layout');
+      const menuButton = document.querySelector('.menu-button');
+
+      menuButton.addEventListener('click', () => {
+        const isOpen = layout.classList.toggle('sidebar-open');
+
+        menuButton.setAttribute('aria-expanded', isOpen);
+      });
+
+      layout.addEventListener('click', (event) => {
+        if (event.target === layout) {
+          layout.classList.remove('sidebar-open');
+
+          menuButton.setAttribute('aria-expanded', 'false');
+        }
+      });
+    </script>
+
+    <!-- CÁLCULO DA VENDA -->
+    <script>
+      const produto = document.getElementById('produto');
+      const quantidade = document.getElementById('quantidade');
+
+      const precoElement = document.getElementById('preco');
+      const estoqueElement = document.getElementById('estoque');
+      const totalElement = document.getElementById('total');
+
+      const btnVenda = document.getElementById('btnVenda');
+
+      function atualizarVenda() {
+        const opcao = produto.options[produto.selectedIndex];
+
+        if (!opcao || !opcao.dataset.preco) {
+          precoElement.textContent = 'R$ 0,00';
+          estoqueElement.textContent = '0';
+          totalElement.textContent = 'R$ 0,00';
+
+          btnVenda.disabled = true;
+
+          return;
+        }
+
+        const preco = Number(opcao.dataset.preco);
+        const estoque = Number(opcao.dataset.estoque);
+        const qtd = Number(quantidade.value);
+
+        precoElement.textContent = preco.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        });
+
+        estoqueElement.textContent = estoque;
+
+        const total = preco * qtd;
+
+        totalElement.textContent = total.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        });
+
+        if (qtd > estoque || qtd <= 0) {
+          btnVenda.disabled = true;
+        } else {
+          btnVenda.disabled = false;
+        }
+      }
+
+      produto.addEventListener('change', atualizarVenda);
+
+      quantidade.addEventListener('input', atualizarVenda);
+
+      atualizarVenda();
+    </script>
+  </body>
+</html>
